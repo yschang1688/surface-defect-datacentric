@@ -1,0 +1,58 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  protocol-tests:
+    # 測試對象是**評估協定**（分組留出不跨越、品質閘會響），不是模型準確率。
+    # 協定寫錯不會有錯誤訊息，只會給出一個好看的數字——所以它才是該被 CI 守住的東西。
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: 安裝相依（CPU 版 torch，CI 不需要 GPU）
+        run: |
+          pip install --index-url https://download.pytorch.org/whl/cpu torch torchvision
+          pip install numpy pillow scikit-learn scipy pytest
+      - run: python -m pytest tests/ -q
+
+  claim-discipline:
+    # 宣稱規則寫死在程式裡是為了「避免事後看著 p 值挑形容詞」。
+    # 這一關確保那條規則本身沒有被改鬆——判定字串與門檻必須維持原樣。
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 判定門檻未被放寬
+        run: |
+          python - <<'PY'
+          import re, sys, pathlib
+          src = pathlib.Path("src/analyze_results.py").read_text(encoding="utf-8")
+          for pattern, desc in [
+              (r"if p < 0\.05:\s*\n\s*return \"可宣稱\"", "p<0.05 → 可宣稱"),
+              (r"if p < 0\.10:\s*\n\s*return \"有跡象但不可宣稱\"", "p<0.10 → 有跡象但不可宣稱"),
+              (r"return \"落在雜訊帶內\"", "其餘 → 落在雜訊帶內"),
+          ]:
+              if not re.search(pattern, src):
+                  sys.exit(f"宣稱規則被改動：{desc} 不再成立")
+          print("✓ 宣稱規則三段判定維持原樣")
+
+          # 已落盤的結論必須與規則一致：p 值與判定字串不得互相矛盾
+          import json
+          a = json.loads(pathlib.Path("results/analysis.json").read_text(encoding="utf-8"))
+          for m, d in a["metrics"].items():
+              p, v = d["p_value"], d["verdict"]
+              expect = "可宣稱" if p < 0.05 else ("有跡象但不可宣稱" if p < 0.10 else "落在雜訊帶內")
+              if v != expect:
+                  sys.exit(f"{m}: p={p} 應判 {expect}，實際寫的是 {v}")
+          print("✓ results/analysis.json 的判定與 p 值一致")
+          PY

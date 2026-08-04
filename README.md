@@ -1,5 +1,7 @@
 # 磁磚表面瑕疵檢測：先確認評估可信，再談模型
 
+[![tests](https://github.com/yschang1688/surface-defect-datacentric/actions/workflows/tests.yml/badge.svg)](https://github.com/yschang1688/surface-defect-datacentric/actions/workflows/tests.yml)
+
 同一批資料、同一個 ResNet-18、同一組超參數，只因為**資料怎麼切**不同，F1 就從 0.88 掉到 0.76。這個專案的產出不是一個分類器，是一份「這個準確率能不能信」的驗收流程。
 
 > **In brief** — A surface-defect classifier for magnetic tiles whose real contribution is the
