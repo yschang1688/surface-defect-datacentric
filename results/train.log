@@ -1,0 +1,56 @@
+/Users/john/surface-defect-datacentric/src/train.py:53: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /Users/runner/work/pytorch/pytorch/torch/csrc/utils/tensor_numpy.cpp:219.)
+  _CACHE[str(it["path"])] = torch.from_numpy(
+1344 張影像 → 472 個磁磚分組｜裝置 mps（影像已快取）
+  random   seed=0 F1=0.7479 AUC=0.9727 acc=0.8214（測試 336 張，瑕疵率 0.27）
+  random   seed=1 F1=0.9017 AUC=0.9873 acc=0.9494（測試 336 張，瑕疵率 0.25）
+  random   seed=2 F1=0.8846 AUC=0.9904 acc=0.9286（測試 336 張，瑕疵率 0.28）
+  random   seed=3 F1=0.7729 AUC=0.9906 acc=0.8304（測試 336 張，瑕疵率 0.29）
+  random   seed=4 F1=0.9490 AUC=0.9899 acc=0.9702（測試 336 張，瑕疵率 0.29）
+  grouped  seed=0 F1=0.6919 AUC=0.8769 acc=0.8304（測試 336 張，瑕疵率 0.34）
+  grouped  seed=1 F1=0.8000 AUC=0.9334 acc=0.9021（測試 337 張，瑕疵率 0.26）
+  grouped  seed=2 F1=0.8230 AUC=0.9496 acc=0.8824（測試 340 張，瑕疵率 0.32）
+  grouped  seed=3 F1=0.6818 AUC=0.9885 acc=0.7935（測試 339 張，瑕疵率 0.22）
+  grouped  seed=4 F1=0.7938 AUC=0.9405 acc=0.8827（測試 341 張，瑕疵率 0.26）
+
+{
+ "random": {
+  "f1": {
+   "mean": 0.8512,
+   "sd": 0.0866,
+   "min": 0.7479,
+   "max": 0.949
+  },
+  "auc": {
+   "mean": 0.9862,
+   "sd": 0.0077,
+   "min": 0.9727,
+   "max": 0.9906
+  },
+  "accuracy": {
+   "mean": 0.9,
+   "sd": 0.0693,
+   "min": 0.8214,
+   "max": 0.9702
+  }
+ },
+ "grouped": {
+  "f1": {
+   "mean": 0.7581,
+   "sd": 0.066,
+   "min": 0.6818,
+   "max": 0.823
+  },
+  "auc": {
+   "mean": 0.9378,
+   "sd": 0.0401,
+   "min": 0.8769,
+   "max": 0.9885
+  },
+  "accuracy": {
+   "mean": 0.8582,
+   "sd": 0.0449,
+   "min": 0.7935,
+   "max": 0.9021
+  }
+ }
+}

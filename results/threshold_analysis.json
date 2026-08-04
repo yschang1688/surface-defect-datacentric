@@ -1,0 +1,45 @@
+{
+ "images": 1344,
+ "sweep": [
+  {
+   "threshold": 0.94,
+   "groups": 215,
+   "largest_group": 196,
+   "multi_image_groups": 172,
+   "cross_exp_groups": 172,
+   "median_num_span": 117
+  },
+  {
+   "threshold": 0.96,
+   "groups": 308,
+   "largest_group": 124,
+   "multi_image_groups": 207,
+   "cross_exp_groups": 207,
+   "median_num_span": 110
+  },
+  {
+   "threshold": 0.98,
+   "groups": 472,
+   "largest_group": 15,
+   "multi_image_groups": 240,
+   "cross_exp_groups": 240,
+   "median_num_span": 94
+  },
+  {
+   "threshold": 0.99,
+   "groups": 661,
+   "largest_group": 12,
+   "multi_image_groups": 232,
+   "cross_exp_groups": 231,
+   "median_num_span": 80
+  },
+  {
+   "threshold": 0.995,
+   "groups": 882,
+   "largest_group": 12,
+   "multi_image_groups": 198,
+   "cross_exp_groups": 197,
+   "median_num_span": 64
+  }
+ ]
+}

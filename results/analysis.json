@@ -1,0 +1,36 @@
+{
+ "n_random": 10,
+ "n_grouped": 10,
+ "metrics": {
+  "f1": {
+   "random_mean": 0.8801,
+   "random_sd": 0.0692,
+   "grouped_mean": 0.7607,
+   "grouped_sd": 0.0567,
+   "gap": 0.1194,
+   "welch_t": 4.221,
+   "p_value": 0.0006,
+   "verdict": "可宣稱"
+  },
+  "auc": {
+   "random_mean": 0.9872,
+   "random_sd": 0.0059,
+   "grouped_mean": 0.9271,
+   "grouped_sd": 0.04,
+   "gap": 0.0601,
+   "welch_t": 4.694,
+   "p_value": 0.001,
+   "verdict": "可宣稱"
+  },
+  "accuracy": {
+   "random_mean": 0.9211,
+   "random_sd": 0.0534,
+   "grouped_mean": 0.847,
+   "grouped_sd": 0.0668,
+   "gap": 0.0741,
+   "welch_t": 2.74,
+   "p_value": 0.0139,
+   "verdict": "可宣稱"
+  }
+ }
+}

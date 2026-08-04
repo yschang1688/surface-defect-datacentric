@@ -1,0 +1,8 @@
+numpy
+pillow
+scikit-learn
+scipy
+torch
+torchvision
+requests
+pytest
