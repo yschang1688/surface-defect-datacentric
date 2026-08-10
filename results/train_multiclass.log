@@ -1,0 +1,62 @@
+/Users/john/surface-defect-datacentric/src/train.py:63: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /Users/runner/work/pytorch/pytorch/torch/csrc/utils/tensor_numpy.cpp:219.)
+  _CACHE[str(it["path"])] = torch.from_numpy(
+1344 張影像 → 472 個磁磚分組｜裝置 mps（影像已快取）
+  random   seed=0 macroF1=0.7579 acc=0.8690（測試 336 張）｜support <10 的類別：Fray
+  random   seed=1 macroF1=0.7297 acc=0.8125（測試 336 張）｜support <10 的類別：Crack、Fray
+  random   seed=2 macroF1=0.8343 acc=0.8899（測試 336 張）
+  random   seed=3 macroF1=0.7447 acc=0.8036（測試 336 張）｜support <10 的類別：Crack
+  random   seed=4 macroF1=0.7977 acc=0.9018（測試 336 張）｜support <10 的類別：Fray
+  random   seed=5 macroF1=0.7600 acc=0.8571（測試 336 張）｜support <10 的類別：Fray
+  random   seed=6 macroF1=0.7521 acc=0.8482（測試 336 張）｜support <10 的類別：Fray
+  random   seed=7 macroF1=0.7264 acc=0.8274（測試 336 張）｜support <10 的類別：Fray
+  random   seed=8 macroF1=0.7657 acc=0.8452（測試 336 張）｜support <10 的類別：Fray
+  random   seed=9 macroF1=0.6906 acc=0.7560（測試 336 張）
+  grouped  seed=0 macroF1=0.7078 acc=0.7470（測試 336 張）｜support <10 的類別：Fray
+  grouped  seed=1 macroF1=0.4945 acc=0.6677（測試 337 張）｜support <10 的類別：Break、Crack、Fray
+  grouped  seed=2 macroF1=0.3624 acc=0.5559（測試 340 張）｜support <10 的類別：Fray
+  grouped  seed=3 macroF1=0.6410 acc=0.8230（測試 339 張）｜support <10 的類別：Fray、Uneven
+  grouped  seed=4 macroF1=0.5624 acc=0.7419（測試 341 張）｜support <10 的類別：Crack、Fray
+  grouped  seed=5 macroF1=0.5993 acc=0.7292（測試 336 張）｜support <10 的類別：Crack
+  grouped  seed=6 macroF1=0.6880 acc=0.8314（測試 338 張）
+  grouped  seed=7 macroF1=0.4089 acc=0.5824（測試 340 張）
+  grouped  seed=8 macroF1=0.7472 acc=0.8274（測試 336 張）｜support <10 的類別：Crack、Fray
+  grouped  seed=9 macroF1=0.6941 acc=0.8270（測試 341 張）｜support <10 的類別：Crack
+
+{
+ "random": {
+  "macro_f1": {
+   "mean": 0.7559,
+   "sd": 0.0394,
+   "min": 0.6906,
+   "max": 0.8343
+  },
+  "accuracy": {
+   "mean": 0.8411,
+   "sd": 0.0432,
+   "min": 0.756,
+   "max": 0.9018
+  }
+ },
+ "grouped": {
+  "macro_f1": {
+   "mean": 0.5906,
+   "sd": 0.1317,
+   "min": 0.3624,
+   "max": 0.7472
+  },
+  "accuracy": {
+   "mean": 0.7333,
+   "sd": 0.1023,
+   "min": 0.5559,
+   "max": 0.8314
+  }
+ },
+ "per_class_support_total": {
+  "Blowhole": 592,
+  "Break": 434,
+  "Crack": 296,
+  "Fray": 168,
+  "Uneven": 497,
+  "Free": 4757
+ }
+}

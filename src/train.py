@@ -1,4 +1,4 @@
-"""瑕疵二分類（有瑕疵／良品）：兩種切分協定 × 多顆種子。
+"""瑕疵分類（二分類／六類擇一）：兩種切分協定 × 多顆種子。
 
 本檔要回答的不是「準確率多少」，而是**這個準確率能不能相信**：
 
@@ -11,6 +11,15 @@
 
 模型不是重點：ResNet-18 ImageNet 預訓練 + 線性頭微調，兩種協定完全同一套
 超參數與訓練輪數，唯一的差別是資料怎麼切。
+
+任務有兩種（`--task`），**協定的結論不因任務而改變**，切分才是本專案的主題：
+
+- `binary`（預設）：有瑕疵／良品。README 與 results/ 既有數字全部產於此設定，
+  改動預設值會讓那些數字對不上，所以預設不動。
+- `multiclass`：資料集原本的六類（Blowhole／Break／Crack／Fray／Uneven／Free）。
+  **這個設定的類別級結論本來就薄**——Fray 僅 32 張，切四分之一去測試只剩個位數，
+  單顆種子的類別級 F1 幾乎全是抽樣雜訊。所以輸出一律附 `per_class` 的 support，
+  讓「這格數字有幾張撐著」和數字本身一起被看到；support 個位數的類別不得拿來宣稱。
 """
 from __future__ import annotations
 
@@ -26,8 +35,9 @@ from PIL import Image
 from sklearn.metrics import f1_score, roc_auc_score
 from torch.utils.data import DataLoader, Dataset
 from torchvision import models
+from torchvision.transforms import v2
 
-from tiles import group_ids, list_images
+from tiles import CLASSES, group_ids, list_images
 
 RESULTS = Path(__file__).resolve().parent.parent / "results"
 IMG_SIZE = 224
@@ -54,13 +64,34 @@ def preload(items: list[dict]) -> None:
             np.asarray(img, dtype=np.uint8)).permute(2, 0, 1).contiguous()
 
 
+# 增強與正規化改用 torchvision.transforms.v2（原為手寫 torch.flip ＋ 手算標準化）。
+# 換的是實作不是行為：v2.RandomHorizontalFlip(p) 內部同樣抽一次 torch.rand(1)、
+# 同樣在 < p 時翻轉，順序也相同（水平→垂直→正規化），所以同種子下輸出張量
+# 與舊版逐位元組相同——tests/test_transforms_parity.py 就是釘住這件事的，
+# 它保留了舊版的手寫實作當對照，兩者不一致即紅。
+#
+# 為什麼要換：手寫版能跑，但履歷與 JD 對話裡講的是「torchvision 影像前處理與增強」，
+# 而原始碼只 import 了 torchvision.models——**說法與程式碼不一致**。
+# 對齊的方向是改程式碼，不是改說法。
+TRAIN_TF = v2.Compose([
+    v2.RandomHorizontalFlip(p=0.5),
+    v2.RandomVerticalFlip(p=0.5),
+    v2.Normalize(mean=MEAN, std=STD),
+])
+EVAL_TF = v2.Compose([v2.Normalize(mean=MEAN, std=STD)])
+
+
+def target_of(item: dict, task: str) -> int:
+    """binary → 有瑕疵(1)／良品(0)；multiclass → CLASSES 的索引。"""
+    return item["is_defect"] if task == "binary" else CLASSES.index(item["label"])
+
+
 class TileSet(Dataset):
     """train=True 時做翻轉增強；正規化兩者相同。"""
 
-    def __init__(self, items: list[dict], train: bool):
-        self.items, self.train = items, train
-        self.mean = torch.tensor(MEAN).view(3, 1, 1)
-        self.std = torch.tensor(STD).view(3, 1, 1)
+    def __init__(self, items: list[dict], train: bool, task: str = "binary"):
+        self.items, self.train, self.task = items, train, task
+        self.tf = TRAIN_TF if train else EVAL_TF
 
     def __len__(self) -> int:
         return len(self.items)
@@ -68,12 +99,7 @@ class TileSet(Dataset):
     def __getitem__(self, i: int):
         it = self.items[i]
         x = _CACHE[str(it["path"])].float() / 255.0
-        if self.train:
-            if torch.rand(1).item() < 0.5:
-                x = torch.flip(x, dims=[2])   # 水平
-            if torch.rand(1).item() < 0.5:
-                x = torch.flip(x, dims=[1])   # 垂直
-        return (x - self.mean) / self.std, it["is_defect"]
+        return self.tf(x), target_of(it, self.task)
 
 
 def split_random(items, gid, rng) -> tuple[list[int], list[int]]:
@@ -99,24 +125,26 @@ def split_grouped(items, gid, rng) -> tuple[list[int], list[int]]:
 SPLITS = {"random": split_random, "grouped": split_grouped}
 
 
-def run_once(items, gid, protocol: str, seed: int, device) -> dict:
+def run_once(items, gid, protocol: str, seed: int, device, task: str = "binary") -> dict:
     torch.manual_seed(seed)
     rng = np.random.default_rng(seed)
     tr_idx, te_idx = SPLITS[protocol](items, gid, rng)
     tr = [items[i] for i in tr_idx]
     te = [items[i] for i in te_idx]
+    n_out = 2 if task == "binary" else len(CLASSES)
 
     model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
-    model.fc = nn.Linear(model.fc.in_features, 2)
+    model.fc = nn.Linear(model.fc.in_features, n_out)
     model.to(device)
     opt = torch.optim.AdamW(model.parameters(), lr=LR)
-    # 類別不均（良品 952 vs 瑕疵 392）：以反頻率加權，否則全猜良品就有 71%
-    w = torch.tensor([1.0 / max(1, sum(1 for x in tr if x["is_defect"] == c))
-                      for c in (0, 1)], dtype=torch.float32, device=device)
+    # 類別不均（二分類：良品 952 vs 瑕疵 392；六類更懸殊，Fray 僅 32 張）：
+    # 以反頻率加權，否則二分類全猜良品就有 71%、六類全猜 Free 也有同一個數量級。
+    w = torch.tensor([1.0 / max(1, sum(1 for x in tr if target_of(x, task) == c))
+                      for c in range(n_out)], dtype=torch.float32, device=device)
     lossf = nn.CrossEntropyLoss(weight=w / w.sum())
 
-    dl_tr = DataLoader(TileSet(tr, True), batch_size=BATCH, shuffle=True)
-    dl_te = DataLoader(TileSet(te, False), batch_size=BATCH)
+    dl_tr = DataLoader(TileSet(tr, True, task), batch_size=BATCH, shuffle=True)
+    dl_te = DataLoader(TileSet(te, False, task), batch_size=BATCH)
 
     model.train()
     for _ in range(EPOCHS):
@@ -130,17 +158,32 @@ def run_once(items, gid, protocol: str, seed: int, device) -> dict:
     probs, ys = [], []
     with torch.no_grad():
         for x, y in dl_te:
-            p = torch.softmax(model(x.to(device)), dim=1)[:, 1]
+            p = torch.softmax(model(x.to(device)), dim=1)
             probs += p.cpu().tolist()
             ys += y.tolist()
-    pred = [int(p >= 0.5) for p in probs]
-    return {
-        "protocol": protocol, "seed": seed,
-        "n_train": len(tr), "n_test": len(te),
-        "test_defect_rate": round(float(np.mean(ys)), 4),
-        "f1": round(f1_score(ys, pred, zero_division=0), 4),
-        "auc": round(roc_auc_score(ys, probs), 4) if len(set(ys)) > 1 else None,
+
+    base = {"protocol": protocol, "seed": seed, "task": task,
+            "n_train": len(tr), "n_test": len(te)}
+    if task == "binary":
+        p1 = [p[1] for p in probs]
+        pred = [int(p >= 0.5) for p in p1]
+        return base | {
+            "test_defect_rate": round(float(np.mean(ys)), 4),
+            "f1": round(f1_score(ys, pred, zero_division=0), 4),
+            "auc": round(roc_auc_score(ys, p1), 4) if len(set(ys)) > 1 else None,
+            "accuracy": round(float(np.mean([p == t for p, t in zip(pred, ys)])), 4),
+        }
+
+    pred = [int(np.argmax(p)) for p in probs]
+    per_cls = f1_score(ys, pred, average=None, labels=range(n_out), zero_division=0)
+    return base | {
+        # macro 平均刻意不加權：小類別（Fray）在 macro 下與大類別等重，
+        # 這正是要看見的——用 weighted 會被 Free 的大 support 蓋掉真正的失敗處。
+        "macro_f1": round(float(f1_score(ys, pred, average="macro", zero_division=0)), 4),
         "accuracy": round(float(np.mean([p == t for p, t in zip(pred, ys)])), 4),
+        "per_class": {CLASSES[c]: {"f1": round(float(per_cls[c]), 4),
+                                   "support": int(sum(1 for t in ys if t == c))}
+                      for c in range(n_out)},
     }
 
 
@@ -150,7 +193,13 @@ def main() -> None:
     ap.add_argument("--seed-start", type=int, default=0)
     ap.add_argument("--out", default="training_results.json")
     ap.add_argument("--protocols", nargs="+", default=["random", "grouped"])
+    ap.add_argument("--task", choices=["binary", "multiclass"], default="binary",
+                    help="binary＝有瑕疵／良品（預設，README 數字產於此）；"
+                         "multiclass＝資料集原本的六類（Fray 僅 32 張，類別級結論薄）")
     a = ap.parse_args()
+    if a.task == "multiclass" and a.out == "training_results.json":
+        # 預設檔名會被 analyze_results.py 撿走與二分類結果混算，直接擋掉
+        a.out = "training_results_multiclass.json"
 
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
     items = list_images()
@@ -158,26 +207,40 @@ def main() -> None:
     preload(items)
     print(f"{len(items)} 張影像 → {gid.max() + 1} 個磁磚分組｜裝置 {device}（影像已快取）")
 
+    metrics = ("f1", "auc", "accuracy") if a.task == "binary" else ("macro_f1", "accuracy")
     rows, t0 = [], time.time()
     for protocol in a.protocols:
         for seed in range(a.seed_start, a.seed_start + a.seeds):
-            r = run_once(items, gid, protocol, seed, device)
+            r = run_once(items, gid, protocol, seed, device, a.task)
             rows.append(r)
-            print(f"  {protocol:8s} seed={seed} F1={r['f1']:.4f} AUC={r['auc']} "
-                  f"acc={r['accuracy']:.4f}（測試 {r['n_test']} 張，瑕疵率 {r['test_defect_rate']:.2f}）")
+            if a.task == "binary":
+                print(f"  {protocol:8s} seed={seed} F1={r['f1']:.4f} AUC={r['auc']} "
+                      f"acc={r['accuracy']:.4f}（測試 {r['n_test']} 張，"
+                      f"瑕疵率 {r['test_defect_rate']:.2f}）")
+            else:
+                thin = [c for c, v in r["per_class"].items() if v["support"] < 10]
+                print(f"  {protocol:8s} seed={seed} macroF1={r['macro_f1']:.4f} "
+                      f"acc={r['accuracy']:.4f}（測試 {r['n_test']} 張）"
+                      + (f"｜support <10 的類別：{'、'.join(thin)}" if thin else ""))
 
     summary = {}
     for protocol in a.protocols:
         v = [r for r in rows if r["protocol"] == protocol]
-        for metric in ("f1", "auc", "accuracy"):
-            xs = [r[metric] for r in v if r[metric] is not None]
+        for metric in metrics:
+            xs = [r[metric] for r in v if r.get(metric) is not None]
             summary.setdefault(protocol, {})[metric] = {
                 "mean": round(float(np.mean(xs)), 4),
                 "sd": round(float(np.std(xs, ddof=1)), 4),
                 "min": round(float(np.min(xs)), 4),
                 "max": round(float(np.max(xs)), 4),
             }
-    out = {"seeds": a.seeds, "epochs": EPOCHS, "groups": int(gid.max() + 1),
+    if a.task == "multiclass":
+        # 各類別的 support 跨種子加總：讓「這格 F1 有幾張撐著」和 F1 同時落檔，
+        # 否則一個 0.00 的類別級 F1 看起來像模型爛，實際上是測試集只有 6 張。
+        summary["per_class_support_total"] = {
+            c: sum(r["per_class"][c]["support"] for r in rows) for c in CLASSES}
+    out = {"seeds": a.seeds, "epochs": EPOCHS, "task": a.task,
+           "groups": int(gid.max() + 1),
            "elapsed_sec": round(time.time() - t0, 1), "runs": rows, "summary": summary}
     RESULTS.mkdir(exist_ok=True)
     (RESULTS / a.out).write_text(
