@@ -30,76 +30,26 @@ from pathlib import Path
 
 import numpy as np
 import torch
-import torch.nn as nn
-from PIL import Image
-from sklearn.metrics import f1_score, roc_auc_score
-from torch.utils.data import DataLoader, Dataset
-from torchvision import models
-from torchvision.transforms import v2
 
+from experiment import BASELINE, build_transforms, fit_eval, target_of  # noqa: F401
+from experiment import MEAN, STD, preload as _preload                   # noqa: F401
 from tiles import CLASSES, group_ids, list_images
 
 RESULTS = Path(__file__).resolve().parent.parent / "results"
-IMG_SIZE = 224
-EPOCHS = 4
-BATCH = 32
-LR = 3e-4
+IMG_SIZE = BASELINE.img_size
+EPOCHS = BASELINE.epochs
+BATCH = BASELINE.batch
+LR = BASELINE.lr
 TEST_FRAC = 0.25
 
-MEAN, STD = [0.485, 0.456, 0.406], [0.229, 0.224, 0.225]
-
-
-# 影像先一次解碼並縮到目標尺寸，以 uint8 存在記憶體（1,344×3×224×224 ≈ 200 MB）。
-# 原本每個 epoch 重讀＋重解原圖，在記憶體吃緊的機器上一輪要跑 40 分鐘以上；
-# 快取後每輪降到分鐘等級。訓練邏輯完全不變，只是不再重複做同一件解碼工作。
-_CACHE: dict[str, torch.Tensor] = {}
+# 訓練迴圈本身搬到 experiment.py，兩邊共用（超參搜尋若用另一套實作，
+# 搜出來的贏家可能贏在實作差異上）。搬家不該換結果：
+# tests/test_experiment_parity.py 釘住 BASELINE 與 results/ 既有數字相同。
+TRAIN_TF, EVAL_TF, _ = build_transforms(BASELINE)
 
 
 def preload(items: list[dict]) -> None:
-    if _CACHE:
-        return
-    for it in items:
-        img = Image.open(it["path"]).convert("RGB").resize((IMG_SIZE, IMG_SIZE))
-        _CACHE[str(it["path"])] = torch.from_numpy(
-            np.asarray(img, dtype=np.uint8)).permute(2, 0, 1).contiguous()
-
-
-# 增強與正規化改用 torchvision.transforms.v2（原為手寫 torch.flip ＋ 手算標準化）。
-# 換的是實作不是行為：v2.RandomHorizontalFlip(p) 內部同樣抽一次 torch.rand(1)、
-# 同樣在 < p 時翻轉，順序也相同（水平→垂直→正規化），所以同種子下輸出張量
-# 與舊版逐位元組相同——tests/test_transforms_parity.py 就是釘住這件事的，
-# 它保留了舊版的手寫實作當對照，兩者不一致即紅。
-#
-# 為什麼要換：手寫版能跑，但履歷與 JD 對話裡講的是「torchvision 影像前處理與增強」，
-# 而原始碼只 import 了 torchvision.models——**說法與程式碼不一致**。
-# 對齊的方向是改程式碼，不是改說法。
-TRAIN_TF = v2.Compose([
-    v2.RandomHorizontalFlip(p=0.5),
-    v2.RandomVerticalFlip(p=0.5),
-    v2.Normalize(mean=MEAN, std=STD),
-])
-EVAL_TF = v2.Compose([v2.Normalize(mean=MEAN, std=STD)])
-
-
-def target_of(item: dict, task: str) -> int:
-    """binary → 有瑕疵(1)／良品(0)；multiclass → CLASSES 的索引。"""
-    return item["is_defect"] if task == "binary" else CLASSES.index(item["label"])
-
-
-class TileSet(Dataset):
-    """train=True 時做翻轉增強；正規化兩者相同。"""
-
-    def __init__(self, items: list[dict], train: bool, task: str = "binary"):
-        self.items, self.train, self.task = items, train, task
-        self.tf = TRAIN_TF if train else EVAL_TF
-
-    def __len__(self) -> int:
-        return len(self.items)
-
-    def __getitem__(self, i: int):
-        it = self.items[i]
-        x = _CACHE[str(it["path"])].float() / 255.0
-        return self.tf(x), target_of(it, self.task)
+    _preload(items, IMG_SIZE)
 
 
 def split_random(items, gid, rng) -> tuple[list[int], list[int]]:
@@ -126,65 +76,15 @@ SPLITS = {"random": split_random, "grouped": split_grouped}
 
 
 def run_once(items, gid, protocol: str, seed: int, device, task: str = "binary") -> dict:
-    torch.manual_seed(seed)
+    """切分照協定，訓練與評估交給 experiment.fit_eval（BASELINE 設定）。
+
+    RNG 順序與搬家前一致：manual_seed 在 fit_eval 裡先做，而切分只吃
+    numpy 的獨立亂數流，兩者互不干擾——所以同種子仍給出同一組數字。
+    """
     rng = np.random.default_rng(seed)
     tr_idx, te_idx = SPLITS[protocol](items, gid, rng)
-    tr = [items[i] for i in tr_idx]
-    te = [items[i] for i in te_idx]
-    n_out = 2 if task == "binary" else len(CLASSES)
-
-    model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
-    model.fc = nn.Linear(model.fc.in_features, n_out)
-    model.to(device)
-    opt = torch.optim.AdamW(model.parameters(), lr=LR)
-    # 類別不均（二分類：良品 952 vs 瑕疵 392；六類更懸殊，Fray 僅 32 張）：
-    # 以反頻率加權，否則二分類全猜良品就有 71%、六類全猜 Free 也有同一個數量級。
-    w = torch.tensor([1.0 / max(1, sum(1 for x in tr if target_of(x, task) == c))
-                      for c in range(n_out)], dtype=torch.float32, device=device)
-    lossf = nn.CrossEntropyLoss(weight=w / w.sum())
-
-    dl_tr = DataLoader(TileSet(tr, True, task), batch_size=BATCH, shuffle=True)
-    dl_te = DataLoader(TileSet(te, False, task), batch_size=BATCH)
-
-    model.train()
-    for _ in range(EPOCHS):
-        for x, y in dl_tr:
-            x, y = x.to(device), y.to(device)
-            opt.zero_grad()
-            lossf(model(x), y).backward()
-            opt.step()
-
-    model.eval()
-    probs, ys = [], []
-    with torch.no_grad():
-        for x, y in dl_te:
-            p = torch.softmax(model(x.to(device)), dim=1)
-            probs += p.cpu().tolist()
-            ys += y.tolist()
-
-    base = {"protocol": protocol, "seed": seed, "task": task,
-            "n_train": len(tr), "n_test": len(te)}
-    if task == "binary":
-        p1 = [p[1] for p in probs]
-        pred = [int(p >= 0.5) for p in p1]
-        return base | {
-            "test_defect_rate": round(float(np.mean(ys)), 4),
-            "f1": round(f1_score(ys, pred, zero_division=0), 4),
-            "auc": round(roc_auc_score(ys, p1), 4) if len(set(ys)) > 1 else None,
-            "accuracy": round(float(np.mean([p == t for p, t in zip(pred, ys)])), 4),
-        }
-
-    pred = [int(np.argmax(p)) for p in probs]
-    per_cls = f1_score(ys, pred, average=None, labels=range(n_out), zero_division=0)
-    return base | {
-        # macro 平均刻意不加權：小類別（Fray）在 macro 下與大類別等重，
-        # 這正是要看見的——用 weighted 會被 Free 的大 support 蓋掉真正的失敗處。
-        "macro_f1": round(float(f1_score(ys, pred, average="macro", zero_division=0)), 4),
-        "accuracy": round(float(np.mean([p == t for p, t in zip(pred, ys)])), 4),
-        "per_class": {CLASSES[c]: {"f1": round(float(per_cls[c]), 4),
-                                   "support": int(sum(1 for t in ys if t == c))}
-                      for c in range(n_out)},
-    }
+    return {"protocol": protocol} | fit_eval(items, tr_idx, te_idx, BASELINE,
+                                             seed, device, task)
 
 
 def main() -> None:

@@ -1,0 +1,10 @@
+/Users/john/surface-defect-datacentric/src/latency.py:77: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /Users/runner/work/pytorch/pytorch/torch/csrc/utils/tensor_numpy.cpp:219.)
+  x = torch.from_numpy(np.asarray(img, dtype=np.uint8)).permute(2, 0, 1)
+mps  resnet18             參數 11.18M｜單筆真實 p50    8.57ms p99   11.44｜只算 forward p50   5.74｜批次攤提   3.09｜未同步（錯）  5.46
+mps  resnet50             參數 23.51M｜單筆真實 p50   18.89ms p99   20.64｜只算 forward p50  16.88｜批次攤提  11.22｜未同步（錯） 16.72
+mps  mobilenet_v3_small   參數  1.52M｜單筆真實 p50    9.21ms p99   11.97｜只算 forward p50   7.24｜批次攤提   1.76｜未同步（錯）  6.97
+mps  efficientnet_b0      參數  4.01M｜單筆真實 p50   13.18ms p99   15.08｜只算 forward p50  11.10｜批次攤提   8.46｜未同步（錯） 10.81
+cpu  resnet18             參數 11.18M｜單筆真實 p50   13.42ms p99   16.85｜只算 forward p50  11.59｜批次攤提  19.23｜未同步（錯） 11.58
+cpu  resnet50             參數 23.51M｜單筆真實 p50   25.20ms p99   29.80｜只算 forward p50  23.27｜批次攤提 105.01｜未同步（錯） 23.26
+cpu  mobilenet_v3_small   參數  1.52M｜單筆真實 p50   43.08ms p99   46.05｜只算 forward p50  41.66｜批次攤提  18.19｜未同步（錯） 41.57
+cpu  efficientnet_b0      參數  4.01M｜單筆真實 p50  119.83ms p99  130.15｜只算 forward p50 118.70｜批次攤提  67.75｜未同步（錯）119.11

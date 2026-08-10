@@ -56,3 +56,53 @@ jobs:
                   sys.exit(f"{m}: p={p} 應判 {expect}，實際寫的是 {v}")
           print("✓ results/analysis.json 的判定與 p 值一致")
           PY
+
+      - name: 封存 test 只能在 sealed_eval.py 開封
+        run: |
+          python - <<'PY'
+          import pathlib, sys
+          # 開封紀錄的價值在於「grep 一次就列得完」。搜尋或 lr 掃描裡出現 unseal，
+          # 代表超參是看著 test 挑的——那份結果作廢，而且不會有任何錯誤訊息。
+          allowed = {"src/nested.py", "src/sealed_eval.py"}
+          bad = [str(p) for p in pathlib.Path("src").glob("*.py")
+                 if "unseal" in p.read_text(encoding="utf-8") and str(p) not in allowed]
+          if bad:
+              sys.exit(f"這些檔案不該開封 test：{bad}")
+          print("✓ 開封只發生在 sealed_eval.py（定義在 nested.py）")
+          PY
+
+      - name: 超參挑選規則與延遲宣稱規則未被放寬
+        run: |
+          python - <<'PY'
+          import json, pathlib, re, sys
+          src = pathlib.Path("src/search.py").read_text(encoding="utf-8")
+          if not re.search(r"^TIE_BAND_SD_MULT = 2\.0\b", src, re.M):
+              sys.exit("同分帶寬度被改動——挑超參的規則必須跑之前就定案")
+          for frag in ("訓練時間中位數最小者", "best_mean − 2.0 × 折間標準誤"):
+              if frag not in src:
+                  sys.exit(f"SELECTION_RULE 缺少「{frag}」")
+          print("✓ 超參挑選規則維持原樣")
+
+          lat = pathlib.Path("src/latency.py").read_text(encoding="utf-8")
+          if 'NOT_PER_IMAGE = {"batch_amortized"}' not in lat:
+              sys.exit("批次攤提不再被標為『不可當單筆延遲』——延遲宣稱會失守")
+          print("✓ 批次攤提仍不得冒充單筆延遲")
+
+          # 已落盤的 v2 結論同樣要與判定規則一致
+          for f, path in (("final_eval.json", "results/final_eval.json"),
+                          ("arch_results.json", "results/arch_results.json")):
+              p = pathlib.Path(path)
+              if not p.exists():
+                  print(f"（{f} 尚未產出，略過）")
+                  continue
+              d = json.loads(p.read_text(encoding="utf-8"))
+              cmps = list(d.get("comparison", {}).values())
+              for block in d.get("vs_resnet18", {}).values():
+                  cmps += list(block.values())
+              for c in cmps:
+                  want = ("可宣稱" if c["p_value"] < 0.05
+                          else "有跡象但不可宣稱" if c["p_value"] < 0.10 else "落在雜訊帶內")
+                  if c["verdict"] != want:
+                      sys.exit(f"{f} {c['metric']}: p={c['p_value']} 應判 {want}，實際 {c['verdict']}")
+              print(f"✓ {f} 的判定與 p 值一致（{len(cmps)} 組）")
+          PY

@@ -1,0 +1,1447 @@
+{
+ "outer_seed": 100,
+ "seeds": 10,
+ "lr_grid": {
+  "adamw": [
+   0.0001,
+   0.0003,
+   0.001
+  ],
+  "sgd": [
+   0.003,
+   0.01,
+   0.03
+  ]
+ },
+ "shared_config": {
+  "arch": "resnet18",
+  "lr": 0.001603,
+  "weight_decay": 0.0,
+  "epochs": 6,
+  "freeze": "partial",
+  "scheduler": "none",
+  "optimizer": "adamw",
+  "aug": "randaugment",
+  "label_smoothing": 0.0,
+  "img_size": 224,
+  "batch": 64
+ },
+ "archs": {
+  "resnet18": {
+   "config": {
+    "arch": "resnet18",
+    "lr": 0.0003,
+    "weight_decay": 0.0,
+    "epochs": 6,
+    "freeze": "partial",
+    "scheduler": "none",
+    "optimizer": "adamw",
+    "aug": "randaugment",
+    "label_smoothing": 0.0,
+    "img_size": 224,
+    "batch": 64
+   },
+   "lr_tuning": {
+    "grid": [
+     {
+      "lr": 0.0001,
+      "val_f1_mean": 0.6685,
+      "val_f1_sd": 0.0739,
+      "best_epoch_median": 5,
+      "folds_f1": [
+       0.6607,
+       0.746,
+       0.5988
+      ]
+     },
+     {
+      "lr": 0.0003,
+      "val_f1_mean": 0.7371,
+      "val_f1_sd": 0.067,
+      "best_epoch_median": 6,
+      "folds_f1": [
+       0.66,
+       0.782,
+       0.7692
+      ]
+     },
+     {
+      "lr": 0.001,
+      "val_f1_mean": 0.6913,
+      "val_f1_sd": 0.1268,
+      "best_epoch_median": 4,
+      "folds_f1": [
+       0.5469,
+       0.7421,
+       0.7848
+      ]
+     }
+    ],
+    "best_lr": 0.0003,
+    "epochs": 6
+   },
+   "sealed": {
+    "f1": {
+     "mean": 0.685,
+     "sd": 0.0282,
+     "min": 0.6305,
+     "max": 0.7232,
+     "n": 10
+    },
+    "auc": {
+     "mean": 0.8799,
+     "sd": 0.0198,
+     "min": 0.8499,
+     "max": 0.9064,
+     "n": 10
+    },
+    "accuracy": {
+     "mean": 0.8295,
+     "sd": 0.0287,
+     "min": 0.7768,
+     "max": 0.8601,
+     "n": 10
+    }
+   },
+   "train_sec_median": 30.9,
+   "runs": [
+    {
+     "seed": 0,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 30.8,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.7117,
+     "auc": 0.902,
+     "accuracy": 0.8601,
+     "config": {
+      "arch": "resnet18",
+      "lr": 0.0003,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 1,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 30.9,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.6811,
+     "auc": 0.8723,
+     "accuracy": 0.8244,
+     "config": {
+      "arch": "resnet18",
+      "lr": 0.0003,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 2,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 30.9,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.7016,
+     "auc": 0.9064,
+     "accuracy": 0.8304,
+     "config": {
+      "arch": "resnet18",
+      "lr": 0.0003,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 3,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 31.2,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.6305,
+     "auc": 0.8499,
+     "accuracy": 0.7768,
+     "config": {
+      "arch": "resnet18",
+      "lr": 0.0003,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 4,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 30.8,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.654,
+     "auc": 0.8731,
+     "accuracy": 0.7827,
+     "config": {
+      "arch": "resnet18",
+      "lr": 0.0003,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 5,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 30.9,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.6918,
+     "auc": 0.8956,
+     "accuracy": 0.8542,
+     "config": {
+      "arch": "resnet18",
+      "lr": 0.0003,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 6,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 30.8,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.6705,
+     "auc": 0.8658,
+     "accuracy": 0.8304,
+     "config": {
+      "arch": "resnet18",
+      "lr": 0.0003,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 7,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 31.0,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.7065,
+     "auc": 0.8867,
+     "accuracy": 0.8393,
+     "config": {
+      "arch": "resnet18",
+      "lr": 0.0003,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 8,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 30.8,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.7232,
+     "auc": 0.8932,
+     "accuracy": 0.8542,
+     "config": {
+      "arch": "resnet18",
+      "lr": 0.0003,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 9,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 30.9,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.6788,
+     "auc": 0.854,
+     "accuracy": 0.8423,
+     "config": {
+      "arch": "resnet18",
+      "lr": 0.0003,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    }
+   ]
+  },
+  "resnet50": {
+   "config": {
+    "arch": "resnet50",
+    "lr": 0.0001,
+    "weight_decay": 0.0,
+    "epochs": 6,
+    "freeze": "partial",
+    "scheduler": "none",
+    "optimizer": "adamw",
+    "aug": "randaugment",
+    "label_smoothing": 0.0,
+    "img_size": 224,
+    "batch": 64
+   },
+   "lr_tuning": {
+    "grid": [
+     {
+      "lr": 0.0001,
+      "val_f1_mean": 0.7424,
+      "val_f1_sd": 0.0851,
+      "best_epoch_median": 6,
+      "folds_f1": [
+       0.6446,
+       0.7826,
+       0.8
+      ]
+     },
+     {
+      "lr": 0.0003,
+      "val_f1_mean": 0.7274,
+      "val_f1_sd": 0.1215,
+      "best_epoch_median": 4,
+      "folds_f1": [
+       0.5891,
+       0.8171,
+       0.7761
+      ]
+     },
+     {
+      "lr": 0.001,
+      "val_f1_mean": 0.7148,
+      "val_f1_sd": 0.0954,
+      "best_epoch_median": 5,
+      "folds_f1": [
+       0.6105,
+       0.7977,
+       0.7362
+      ]
+     }
+    ],
+    "best_lr": 0.0001,
+    "epochs": 6
+   },
+   "sealed": {
+    "f1": {
+     "mean": 0.7123,
+     "sd": 0.0593,
+     "min": 0.627,
+     "max": 0.8092,
+     "n": 10
+    },
+    "auc": {
+     "mean": 0.9038,
+     "sd": 0.0247,
+     "min": 0.8472,
+     "max": 0.9311,
+     "n": 10
+    },
+    "accuracy": {
+     "mean": 0.8286,
+     "sd": 0.0587,
+     "min": 0.7202,
+     "max": 0.9018,
+     "n": 10
+    }
+   },
+   "train_sec_median": 101.5,
+   "runs": [
+    {
+     "seed": 0,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 101.8,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.7654,
+     "auc": 0.9066,
+     "accuracy": 0.8869,
+     "config": {
+      "arch": "resnet50",
+      "lr": 0.0001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 1,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 101.2,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.8092,
+     "auc": 0.9311,
+     "accuracy": 0.9018,
+     "config": {
+      "arch": "resnet50",
+      "lr": 0.0001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 2,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 101.5,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.6754,
+     "auc": 0.9232,
+     "accuracy": 0.7798,
+     "config": {
+      "arch": "resnet50",
+      "lr": 0.0001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 3,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 101.5,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.7238,
+     "auc": 0.9213,
+     "accuracy": 0.8274,
+     "config": {
+      "arch": "resnet50",
+      "lr": 0.0001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 4,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 101.3,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.7665,
+     "auc": 0.9016,
+     "accuracy": 0.8839,
+     "config": {
+      "arch": "resnet50",
+      "lr": 0.0001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 5,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 101.5,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.6544,
+     "auc": 0.8957,
+     "accuracy": 0.7768,
+     "config": {
+      "arch": "resnet50",
+      "lr": 0.0001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 6,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 104.8,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.7419,
+     "auc": 0.9234,
+     "accuracy": 0.8571,
+     "config": {
+      "arch": "resnet50",
+      "lr": 0.0001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 7,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 101.5,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.6531,
+     "auc": 0.8472,
+     "accuracy": 0.7976,
+     "config": {
+      "arch": "resnet50",
+      "lr": 0.0001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 8,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 102.3,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.7066,
+     "auc": 0.8836,
+     "accuracy": 0.8542,
+     "config": {
+      "arch": "resnet50",
+      "lr": 0.0001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 9,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 101.3,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.627,
+     "auc": 0.9046,
+     "accuracy": 0.7202,
+     "config": {
+      "arch": "resnet50",
+      "lr": 0.0001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    }
+   ]
+  },
+  "mobilenet_v3_small": {
+   "config": {
+    "arch": "mobilenet_v3_small",
+    "lr": 0.001,
+    "weight_decay": 0.0,
+    "epochs": 5,
+    "freeze": "partial",
+    "scheduler": "none",
+    "optimizer": "adamw",
+    "aug": "randaugment",
+    "label_smoothing": 0.0,
+    "img_size": 224,
+    "batch": 64
+   },
+   "lr_tuning": {
+    "grid": [
+     {
+      "lr": 0.0001,
+      "val_f1_mean": 0.3261,
+      "val_f1_sd": 0.1145,
+      "best_epoch_median": 6,
+      "folds_f1": [
+       0.4524,
+       0.229,
+       0.297
+      ]
+     },
+     {
+      "lr": 0.0003,
+      "val_f1_mean": 0.2229,
+      "val_f1_sd": 0.2176,
+      "best_epoch_median": 3,
+      "folds_f1": [
+       0.4348,
+       0.0,
+       0.234
+      ]
+     },
+     {
+      "lr": 0.001,
+      "val_f1_mean": 0.5944,
+      "val_f1_sd": 0.0485,
+      "best_epoch_median": 5,
+      "folds_f1": [
+       0.6441,
+       0.5472,
+       0.592
+      ]
+     }
+    ],
+    "best_lr": 0.001,
+    "epochs": 5
+   },
+   "sealed": {
+    "f1": {
+     "mean": 0.535,
+     "sd": 0.0848,
+     "min": 0.3619,
+     "max": 0.6415,
+     "n": 10
+    },
+    "auc": {
+     "mean": 0.7785,
+     "sd": 0.0246,
+     "min": 0.7363,
+     "max": 0.8068,
+     "n": 10
+    },
+    "accuracy": {
+     "mean": 0.8071,
+     "sd": 0.0418,
+     "min": 0.7024,
+     "max": 0.8452,
+     "n": 10
+    }
+   },
+   "train_sec_median": 15.8,
+   "runs": [
+    {
+     "seed": 0,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 16.8,
+     "epochs_run": 5,
+     "test_defect_rate": 0.256,
+     "f1": 0.6415,
+     "auc": 0.806,
+     "accuracy": 0.8304,
+     "config": {
+      "arch": "mobilenet_v3_small",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 5,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 1,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 15.8,
+     "epochs_run": 5,
+     "test_defect_rate": 0.256,
+     "f1": 0.4182,
+     "auc": 0.7384,
+     "accuracy": 0.8095,
+     "config": {
+      "arch": "mobilenet_v3_small",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 5,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 2,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 15.7,
+     "epochs_run": 5,
+     "test_defect_rate": 0.256,
+     "f1": 0.3619,
+     "auc": 0.7737,
+     "accuracy": 0.8006,
+     "config": {
+      "arch": "mobilenet_v3_small",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 5,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 3,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 15.8,
+     "epochs_run": 5,
+     "test_defect_rate": 0.256,
+     "f1": 0.5299,
+     "auc": 0.8068,
+     "accuracy": 0.8363,
+     "config": {
+      "arch": "mobilenet_v3_small",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 5,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 4,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 15.8,
+     "epochs_run": 5,
+     "test_defect_rate": 0.256,
+     "f1": 0.5714,
+     "auc": 0.7897,
+     "accuracy": 0.8304,
+     "config": {
+      "arch": "mobilenet_v3_small",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 5,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 5,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 15.8,
+     "epochs_run": 5,
+     "test_defect_rate": 0.256,
+     "f1": 0.537,
+     "auc": 0.7941,
+     "accuracy": 0.7024,
+     "config": {
+      "arch": "mobilenet_v3_small",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 5,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 6,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 15.9,
+     "epochs_run": 5,
+     "test_defect_rate": 0.256,
+     "f1": 0.529,
+     "auc": 0.7363,
+     "accuracy": 0.7827,
+     "config": {
+      "arch": "mobilenet_v3_small",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 5,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 7,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 15.8,
+     "epochs_run": 5,
+     "test_defect_rate": 0.256,
+     "f1": 0.5821,
+     "auc": 0.7734,
+     "accuracy": 0.8333,
+     "config": {
+      "arch": "mobilenet_v3_small",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 5,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 8,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 15.8,
+     "epochs_run": 5,
+     "test_defect_rate": 0.256,
+     "f1": 0.5988,
+     "auc": 0.7793,
+     "accuracy": 0.8006,
+     "config": {
+      "arch": "mobilenet_v3_small",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 5,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 9,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 15.8,
+     "epochs_run": 5,
+     "test_defect_rate": 0.256,
+     "f1": 0.5806,
+     "auc": 0.7869,
+     "accuracy": 0.8452,
+     "config": {
+      "arch": "mobilenet_v3_small",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 5,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    }
+   ]
+  },
+  "efficientnet_b0": {
+   "config": {
+    "arch": "efficientnet_b0",
+    "lr": 0.001,
+    "weight_decay": 0.0,
+    "epochs": 6,
+    "freeze": "partial",
+    "scheduler": "none",
+    "optimizer": "adamw",
+    "aug": "randaugment",
+    "label_smoothing": 0.0,
+    "img_size": 224,
+    "batch": 64
+   },
+   "lr_tuning": {
+    "grid": [
+     {
+      "lr": 0.0001,
+      "val_f1_mean": 0.5622,
+      "val_f1_sd": 0.0605,
+      "best_epoch_median": 5,
+      "folds_f1": [
+       0.4933,
+       0.5867,
+       0.6067
+      ]
+     },
+     {
+      "lr": 0.0003,
+      "val_f1_mean": 0.6218,
+      "val_f1_sd": 0.0339,
+      "best_epoch_median": 5,
+      "folds_f1": [
+       0.5846,
+       0.6299,
+       0.6509
+      ]
+     },
+     {
+      "lr": 0.001,
+      "val_f1_mean": 0.7183,
+      "val_f1_sd": 0.0382,
+      "best_epoch_median": 6,
+      "folds_f1": [
+       0.6783,
+       0.7543,
+       0.7222
+      ]
+     }
+    ],
+    "best_lr": 0.001,
+    "epochs": 6
+   },
+   "sealed": {
+    "f1": {
+     "mean": 0.7152,
+     "sd": 0.0216,
+     "min": 0.6832,
+     "max": 0.7539,
+     "n": 10
+    },
+    "auc": {
+     "mean": 0.9008,
+     "sd": 0.009,
+     "min": 0.8841,
+     "max": 0.9134,
+     "n": 10
+    },
+    "accuracy": {
+     "mean": 0.8479,
+     "sd": 0.0172,
+     "min": 0.8155,
+     "max": 0.8661,
+     "n": 10
+    }
+   },
+   "train_sec_median": 62.9,
+   "runs": [
+    {
+     "seed": 0,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 63.2,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.7052,
+     "auc": 0.9093,
+     "accuracy": 0.8482,
+     "config": {
+      "arch": "efficientnet_b0",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 1,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 62.8,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.7444,
+     "auc": 0.9084,
+     "accuracy": 0.8631,
+     "config": {
+      "arch": "efficientnet_b0",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 2,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 62.9,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.715,
+     "auc": 0.894,
+     "accuracy": 0.8363,
+     "config": {
+      "arch": "efficientnet_b0",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 3,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 62.9,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.7539,
+     "auc": 0.9134,
+     "accuracy": 0.8601,
+     "config": {
+      "arch": "efficientnet_b0",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 4,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 62.9,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.7273,
+     "auc": 0.9,
+     "accuracy": 0.8661,
+     "config": {
+      "arch": "efficientnet_b0",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 5,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 62.8,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.6832,
+     "auc": 0.8999,
+     "accuracy": 0.8482,
+     "config": {
+      "arch": "efficientnet_b0",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 6,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 62.9,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.702,
+     "auc": 0.893,
+     "accuracy": 0.8661,
+     "config": {
+      "arch": "efficientnet_b0",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 7,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 62.7,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.7182,
+     "auc": 0.9075,
+     "accuracy": 0.8482,
+     "config": {
+      "arch": "efficientnet_b0",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 8,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 62.9,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.7019,
+     "auc": 0.8984,
+     "accuracy": 0.8155,
+     "config": {
+      "arch": "efficientnet_b0",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    },
+    {
+     "seed": 9,
+     "task": "binary",
+     "n_train": 1008,
+     "n_test": 336,
+     "train_sec": 62.9,
+     "epochs_run": 6,
+     "test_defect_rate": 0.256,
+     "f1": 0.701,
+     "auc": 0.8841,
+     "accuracy": 0.8274,
+     "config": {
+      "arch": "efficientnet_b0",
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "epochs": 6,
+      "freeze": "partial",
+      "scheduler": "none",
+      "optimizer": "adamw",
+      "aug": "randaugment",
+      "label_smoothing": 0.0,
+      "img_size": 224,
+      "batch": 64
+     }
+    }
+   ]
+  }
+ },
+ "sealed_opens": [
+  "架構對照正式評估：resnet18",
+  "架構對照正式評估：resnet50",
+  "架構對照正式評估：mobilenet_v3_small",
+  "架構對照正式評估：efficientnet_b0"
+ ],
+ "vs_resnet18": {
+  "resnet50": {
+   "f1": {
+    "metric": "f1",
+    "a_mean": 0.7123,
+    "b_mean": 0.685,
+    "gap": 0.0274,
+    "welch_t": 1.317,
+    "p_value": 0.2108,
+    "verdict": "落在雜訊帶內"
+   },
+   "auc": {
+    "metric": "auc",
+    "a_mean": 0.9038,
+    "b_mean": 0.8799,
+    "gap": 0.0239,
+    "welch_t": 2.388,
+    "p_value": 0.0287,
+    "verdict": "可宣稱"
+   },
+   "accuracy": {
+    "metric": "accuracy",
+    "a_mean": 0.8286,
+    "b_mean": 0.8295,
+    "gap": -0.0009,
+    "welch_t": -0.044,
+    "p_value": 0.9656,
+    "verdict": "落在雜訊帶內"
+   }
+  },
+  "mobilenet_v3_small": {
+   "f1": {
+    "metric": "f1",
+    "a_mean": 0.535,
+    "b_mean": 0.685,
+    "gap": -0.1499,
+    "welch_t": -5.306,
+    "p_value": 0.0003,
+    "verdict": "可宣稱"
+   },
+   "auc": {
+    "metric": "auc",
+    "a_mean": 0.7785,
+    "b_mean": 0.8799,
+    "gap": -0.1014,
+    "welch_t": -10.162,
+    "p_value": 0.0,
+    "verdict": "可宣稱"
+   },
+   "accuracy": {
+    "metric": "accuracy",
+    "a_mean": 0.8071,
+    "b_mean": 0.8295,
+    "gap": -0.0223,
+    "welch_t": -1.393,
+    "p_value": 0.1826,
+    "verdict": "落在雜訊帶內"
+   }
+  },
+  "efficientnet_b0": {
+   "f1": {
+    "metric": "f1",
+    "a_mean": 0.7152,
+    "b_mean": 0.685,
+    "gap": 0.0302,
+    "welch_t": 2.695,
+    "p_value": 0.0154,
+    "verdict": "可宣稱"
+   },
+   "auc": {
+    "metric": "auc",
+    "a_mean": 0.9008,
+    "b_mean": 0.8799,
+    "gap": 0.0209,
+    "welch_t": 3.038,
+    "p_value": 0.0099,
+    "verdict": "可宣稱"
+   },
+   "accuracy": {
+    "metric": "accuracy",
+    "a_mean": 0.8479,
+    "b_mean": 0.8295,
+    "gap": 0.0184,
+    "welch_t": 1.744,
+    "p_value": 0.102,
+    "verdict": "落在雜訊帶內"
+   }
+  }
+ },
+ "pooled_seed_sd_f1": 0.0547
+}

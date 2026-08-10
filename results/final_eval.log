@@ -1,0 +1,9 @@
+/Users/john/surface-defect-datacentric/src/experiment.py:79: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /Users/runner/work/pytorch/pytorch/torch/csrc/utils/tensor_numpy.cpp:219.)
+  _CACHE[key] = torch.from_numpy(
+勝出設定：{"arch": "resnet18", "lr": 0.001603, "weight_decay": 0.0, "epochs": 6, "freeze": "partial", "scheduler": "none", "optimizer": "adamw", "aug": "randaugment", "label_smoothing": 0.0, "img_size": 224, "batch": 64}
+搜尋期間 val F1 0.7610（三折）→ 現在到封存 test 上驗
+  tuned    F1 0.6819
+  baseline F1 0.7381
+
+差距 -0.0561（p=0.0386）→ 可宣稱
+選擇性樂觀（val − test）：+0.0791

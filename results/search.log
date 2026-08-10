@@ -1,0 +1,39 @@
+/Users/john/surface-defect-datacentric/src/experiment.py:79: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /Users/runner/work/pytorch/pytorch/torch/csrc/utils/tensor_numpy.cpp:219.)
+  _CACHE[key] = torch.from_numpy(
+1344 張／472 組｜dev 1008｜封存 test 336｜3 折 val [255, 252, 255]｜裝置 mps
+  [ 1/32] val F1 0.6267 ±0.0535｜13s｜resnet18 lr=0.007025 sgd backbone onecycle flips ls=0.0 sz=160 bs=64 wd=0｜best_ep=5
+  [ 2/32] val F1 0.6216 ±0.0442｜23s｜resnet18 lr=0.001094 adamw none onecycle flips_rot_jitter ls=0.1 sz=160 bs=32 wd=0｜best_ep=4
+  [ 3/32] val F1 0.4464 ±0.0754｜30s｜resnet18 lr=8.7e-05 adamw backbone onecycle flips_rot_jitter ls=0.1 sz=224 bs=32 wd=0｜best_ep=3
+  [ 4/32] val F1 0.6179 ±0.0790｜23s｜resnet18 lr=0.003638 sgd backbone cosine flips ls=0.1 sz=224 bs=32 wd=0.01｜best_ep=5
+  [ 5/32] val F1 0.6173 ±0.1224｜28s｜resnet18 lr=0.003579 sgd backbone none randaugment ls=0.1 sz=224 bs=64 wd=0｜best_ep=6
+  [ 6/32] val F1 0.6837 ±0.0466｜17s｜resnet18 lr=0.000642 adamw partial none randaugment ls=0.0 sz=160 bs=32 wd=0｜best_ep=4
+  [ 7/32] val F1 0.7092 ±0.0691｜29s｜resnet18 lr=0.008292 sgd partial cosine randaugment ls=0.1 sz=224 bs=32 wd=0.01｜best_ep=3
+  [ 8/32] val F1 0.4380 ±0.0894｜17s｜resnet18 lr=0.000145 adamw backbone none flips_rot_jitter ls=0.1 sz=160 bs=32 wd=0.0001｜best_ep=3
+  [ 9/32] val F1 0.6450 ±0.1051｜16s｜resnet18 lr=0.043577 sgd partial cosine randaugment ls=0.1 sz=160 bs=64 wd=0｜best_ep=5
+  [10/32] val F1 0.6057 ±0.0774｜39s｜resnet18 lr=0.002414 sgd none onecycle randaugment ls=0.1 sz=224 bs=64 wd=0.01｜best_ep=3
+  [11/32] val F1 0.6443 ±0.0513｜31s｜resnet18 lr=0.003533 sgd none none randaugment ls=0.1 sz=160 bs=64 wd=0｜best_ep=4
+  [12/32] val F1 0.6181 ±0.2022｜17s｜resnet18 lr=0.003662 sgd partial none flips_rot_jitter ls=0.0 sz=160 bs=32 wd=0.01｜best_ep=5
+  [13/32] val F1 0.6340 ±0.0457｜33s｜resnet18 lr=0.009214 sgd none onecycle randaugment ls=0.1 sz=160 bs=64 wd=0.01｜best_ep=4
+  [14/32] val F1 0.4840 ±0.1302｜12s｜resnet18 lr=0.022229 sgd backbone onecycle flips_rot_jitter ls=0.1 sz=160 bs=64 wd=0｜best_ep=4
+  [15/32] val F1 0.6488 ±0.1496｜31s｜resnet18 lr=0.034438 sgd partial onecycle flips_rot_jitter ls=0.1 sz=224 bs=64 wd=0｜best_ep=5
+  [16/32] val F1 0.5980 ±0.1375｜19s｜resnet18 lr=0.002133 sgd partial none randaugment ls=0.0 sz=224 bs=64 wd=0.01｜best_ep=3
+  [17/32] val F1 0.3927 ±0.0681｜10s｜resnet18 lr=5.1e-05 adamw backbone onecycle flips ls=0.1 sz=160 bs=32 wd=0.0001｜best_ep=3
+  [18/32] val F1 0.6253 ±0.0904｜30s｜resnet18 lr=0.005766 sgd backbone none flips_rot_jitter ls=0.1 sz=224 bs=32 wd=0.0001｜best_ep=5
+  [19/32] val F1 0.6063 ±0.1178｜11s｜resnet18 lr=0.04174 sgd partial cosine flips ls=0.0 sz=160 bs=64 wd=0｜best_ep=4
+  [20/32] val F1 0.6058 ±0.1363｜61s｜resnet18 lr=0.003065 sgd none cosine flips_rot_jitter ls=0.1 sz=224 bs=64 wd=0.01｜best_ep=4
+  [21/32] val F1 0.7012 ±0.0707｜22s｜resnet18 lr=8.5e-05 adamw none none randaugment ls=0.0 sz=160 bs=64 wd=0｜best_ep=2
+  [22/32] val F1 0.6810 ±0.0413｜44s｜resnet18 lr=0.000552 adamw none cosine flips_rot_jitter ls=0.0 sz=160 bs=64 wd=0.0001｜best_ep=5
+  [23/32] val F1 0.6221 ±0.0764｜30s｜resnet18 lr=0.001658 sgd partial onecycle flips_rot_jitter ls=0.0 sz=224 bs=32 wd=0.0001｜best_ep=6
+  [24/32] val F1 0.8260 ±0.1183｜61s｜resnet18 lr=0.00053 adamw none none flips ls=0.0 sz=224 bs=64 wd=0｜best_ep=6
+  [25/32] val F1 0.6301 ±0.1441｜11s｜resnet18 lr=0.068452 sgd partial onecycle flips ls=0.1 sz=160 bs=64 wd=0.01｜best_ep=4
+  [26/32] val F1 0.6950 ±0.0968｜31s｜resnet18 lr=0.00012 adamw partial onecycle flips_rot_jitter ls=0.1 sz=224 bs=32 wd=0.0001｜best_ep=5
+  [27/32] val F1 0.6386 ±0.1014｜22s｜resnet18 lr=0.011253 sgd none onecycle flips ls=0.1 sz=160 bs=32 wd=0.01｜best_ep=4
+  [28/32] val F1 0.7610 ±0.1071｜40s｜resnet18 lr=0.001603 adamw partial none randaugment ls=0.0 sz=224 bs=64 wd=0｜best_ep=6
+  [29/32] val F1 0.4289 ±0.0764｜22s｜resnet18 lr=0.048134 sgd none onecycle randaugment ls=0.0 sz=160 bs=32 wd=0.01｜best_ep=1
+  [30/32] val F1 0.6159 ±0.0746｜8s｜resnet18 lr=0.011042 sgd backbone cosine randaugment ls=0.0 sz=160 bs=64 wd=0.01｜best_ep=4
+  [31/32] val F1 0.5631 ±0.1112｜34s｜resnet18 lr=0.001115 adamw none none randaugment ls=0.1 sz=160 bs=32 wd=0｜best_ep=4
+  [32/32] val F1 0.7091 ±0.1092｜44s｜resnet18 lr=0.010177 sgd partial cosine flips_rot_jitter ls=0.1 sz=224 bs=32 wd=0.0001｜best_ep=8
+
+同分帶 ±0.1167（折間 sd 0.1011）｜帶內 2 組｜平均最高是 #23（0.8260）
+依規則勝出：#27 val F1 0.7610、40s、best_epoch 6
+{"arch": "resnet18", "lr": 0.001603, "weight_decay": 0.0, "epochs": 8, "freeze": "partial", "scheduler": "none", "optimizer": "adamw", "aug": "randaugment", "label_smoothing": 0.0, "img_size": 224, "batch": 64}

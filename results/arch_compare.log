@@ -1,0 +1,32 @@
+/Users/john/surface-defect-datacentric/src/experiment.py:79: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /Users/runner/work/pytorch/pytorch/torch/csrc/utils/tensor_numpy.cpp:219.)
+  _CACHE[key] = torch.from_numpy(
+共用超參（lr 除外）：{"arch": "resnet18", "lr": 0.001603, "weight_decay": 0.0, "epochs": 6, "freeze": "partial", "scheduler": "none", "optimizer": "adamw", "aug": "randaugment", "label_smoothing": 0.0, "img_size": 224, "batch": 64}
+
+resnet18：內層 val 掃 lr
+    lr=0.0001   val F1 0.6685 ±0.0739｜best_ep=5
+    lr=0.0003   val F1 0.7371 ±0.0670｜best_ep=6
+    lr=0.001    val F1 0.6913 ±0.1268｜best_ep=4
+  → 封存 test F1 0.6850 ±0.0282（lr=0.0003, epochs=6）
+
+resnet50：內層 val 掃 lr
+    lr=0.0001   val F1 0.7424 ±0.0851｜best_ep=6
+    lr=0.0003   val F1 0.7274 ±0.1215｜best_ep=4
+    lr=0.001    val F1 0.7148 ±0.0954｜best_ep=5
+  → 封存 test F1 0.7123 ±0.0593（lr=0.0001, epochs=6）
+
+mobilenet_v3_small：內層 val 掃 lr
+    lr=0.0001   val F1 0.3261 ±0.1145｜best_ep=6
+    lr=0.0003   val F1 0.2229 ±0.2176｜best_ep=3
+    lr=0.001    val F1 0.5944 ±0.0485｜best_ep=5
+  → 封存 test F1 0.5350 ±0.0848（lr=0.001, epochs=5）
+
+efficientnet_b0：內層 val 掃 lr
+    lr=0.0001   val F1 0.5622 ±0.0605｜best_ep=5
+    lr=0.0003   val F1 0.6218 ±0.0339｜best_ep=5
+    lr=0.001    val F1 0.7183 ±0.0382｜best_ep=6
+  → 封存 test F1 0.7152 ±0.0216（lr=0.001, epochs=6）
+
+種子間合併 sd（F1）：0.0547
+  resnet50             vs resnet18: +0.0274（p=0.2108）→ 落在雜訊帶內
+  mobilenet_v3_small   vs resnet18: -0.1499（p=0.0003）→ 可宣稱
+  efficientnet_b0      vs resnet18: +0.0302（p=0.0154）→ 可宣稱
