@@ -7,6 +7,24 @@
   0.826
  ],
  "winner": 27,
+ "decomposition": {
+  "fold_means": [
+   0.5249,
+   0.689,
+   0.6368
+  ],
+  "share_fold_effect": 0.3043,
+  "share_config_effect": 0.5579,
+  "share_residual": 0.1378,
+  "pooled_sd": 0.1011,
+  "paired_diff_sd_median": 0.063,
+  "variance_removed_by_pairing": 0.3769,
+  "corr_mean_sd": 0.0381,
+  "n_configs": 32,
+  "n_folds": 3
+ },
+ "gap_top_vs_winner": 0.065,
+ "folds_needed_for_that_gap": 4,
  "marginals": {
   "epochs": {
    "buckets": {

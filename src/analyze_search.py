@@ -69,6 +69,63 @@ def marginals(rows: list[dict], band: float) -> dict:
     return out
 
 
+def decompose(rows: list[dict]) -> dict:
+    """把 設定 × 折 的成績拆成「折主效應／設定主效應／殘差」。
+
+    同分帶寬到 ±0.117 時，第一個要問的是**這個浮動是誰造成的**：
+
+    - 若主要來自**折**（某一折對所有設定都難），那是共同的加法偏移，
+      成對比較（同一批折上比兩組）就能消掉一部分——帶不該用它撐開。
+    - 若主要來自**殘差**（這組設定剛好在這折特別好），那才是真雜訊，
+      只能靠增加折數壓下去。
+
+    這裡順便量出成對後還剩多少：兩兩相減後的逐折差 sd 中位數。
+    """
+    M = np.array([[f["f1"] for f in sorted(r["folds"], key=lambda x: x["fold"])]
+                  for r in rows])
+    n_cfg, n_fold = M.shape
+    grand = M.mean()
+    fold_mean, cfg_mean = M.mean(0), M.mean(1)
+    ss_total = float(((M - grand) ** 2).sum())
+    ss_fold = float(n_cfg * ((fold_mean - grand) ** 2).sum())
+    ss_cfg = float(n_fold * ((cfg_mean - grand) ** 2).sum())
+    pair_sds = [float((M[i] - M[j]).std(ddof=1))
+                for i in range(n_cfg) for j in range(i + 1, n_cfg)]
+    sds = np.array([r["val_f1_sd"] for r in rows])
+    means = np.array([r["val_f1_mean"] for r in rows])
+    pooled = float(np.sqrt((sds ** 2).mean()))
+    return {
+        "fold_means": [round(float(x), 4) for x in fold_mean],
+        "share_fold_effect": round(ss_fold / ss_total, 4),
+        "share_config_effect": round(ss_cfg / ss_total, 4),
+        "share_residual": round((ss_total - ss_fold - ss_cfg) / ss_total, 4),
+        "pooled_sd": round(pooled, 4),
+        "paired_diff_sd_median": round(float(np.median(pair_sds)), 4),
+        # 折間完全沒有浮動時 pooled 是 0，相除會炸；那種情況本來就無從談「消掉幾成」。
+        "variance_removed_by_pairing": (
+            None if pooled == 0
+            else round(1 - float(np.median(pair_sds)) / pooled, 4)),
+        # 爛設定會不會把合併 sd 拉大？相關係數接近 0 就不是這個原因。
+        # 任一邊零變異時相關係數無定義（np 會回 nan），明寫 None 不留 nan。
+        "corr_mean_sd": (None if means.std() == 0 or sds.std() == 0
+                         else round(float(np.corrcoef(means, sds)[0, 1]), 4)),
+        "n_configs": n_cfg, "n_folds": n_fold,
+    }
+
+
+def folds_needed(paired_sd: float, gap: float, mult: float = 2.0) -> int:
+    """要讓 `gap` 這麼大的差距落到同分帶外，需要幾折。
+
+    帶寬＝mult × paired_sd / √k，要落到帶外得 **嚴格** 小於 gap，
+    因為同分帶用的是 `>= best − band`（剛好等於帶寬的仍算同分）。
+    於是 k > (mult·sd/gap)²，恰好整除時要再加一折。
+
+    這個數字回答的是「下一輪該加到幾折」，不是回頭改這一輪的判定。
+    """
+    x = (mult * paired_sd / gap) ** 2
+    return int(np.floor(x)) + 1 if abs(x - round(x)) < 1e-9 else int(np.ceil(x))
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--search", default="search_results.json")
@@ -82,6 +139,20 @@ def main() -> None:
     print(f"{len(rows)} 組設定｜val F1 {min(f1s):.4f}–{max(f1s):.4f}｜同分帶 ±{band:.4f}"
           f"｜帶內 {len(sel['tie_set'])} 組")
 
+    dec = decompose(rows)
+    top, win = rows[sel["best_by_mean"]], rows[sel["winner"]]
+    gap = round(top["val_f1_mean"] - win["val_f1_mean"], 4)
+    need = folds_needed(dec["paired_diff_sd_median"], gap) if gap > 0 else None
+    print(f"\n變異拆解：折主效應 {dec['share_fold_effect']:.1%}"
+          f"｜設定主效應 {dec['share_config_effect']:.1%}"
+          f"｜殘差 {dec['share_residual']:.1%}｜各折平均 {dec['fold_means']}")
+    print(f"  合併 sd {dec['pooled_sd']} → 成對後 {dec['paired_diff_sd_median']}"
+          f"（消掉 {dec['variance_removed_by_pairing']:.0%}）"
+          f"｜mean-sd 相關 {dec['corr_mean_sd']}")
+    if need:
+        print(f"  帶內第一名與勝出者差 {gap} → 要讓它落到帶外需 {need} 折"
+              f"（本次 {dec['n_folds']} 折）")
+
     m = marginals(rows, band)
     print(f"\n{'維度':16s}{'跨度':>8s}  各取值（平均 F1／n）")
     for dim, v in sorted(m.items(), key=lambda kv: -kv[1]["spread"]):
@@ -92,7 +163,9 @@ def main() -> None:
 
     out = {"n_configs": len(rows), "tie_band": band, "tie_set_size": len(sel["tie_set"]),
            "val_f1_range": [round(min(f1s), 4), round(max(f1s), 4)],
-           "winner": sel["winner"], "marginals": m,
+           "winner": sel["winner"], "decomposition": dec,
+           "gap_top_vs_winner": gap, "folds_needed_for_that_gap": need,
+           "marginals": m,
            "caveat": "邊際平均是觀察不是實驗：堆內其他維度隨機、堆間可能有交互作用，"
                      "跨度小於同分帶只代表分不出來，不代表沒有效果。"}
     (RESULTS / a.out).write_text(json.dumps(out, ensure_ascii=False, indent=1),
